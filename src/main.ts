@@ -23,6 +23,7 @@ async function installChart(): Promise<void> {
 
   const releaseName = getReleaseName(chart)
   core.saveState(STATE_KEY_RELEASE_NAME, releaseName)
+  core.setOutput('releaseName', releaseName)
 
   await exec.exec(helmCmd, ['repo', 'add', 'repo', repo])
   await exec.exec(helmCmd, ['install', releaseName, `repo/${chart}`])
@@ -40,7 +41,9 @@ async function cleanup(): Promise<void> {
 }
 
 function getReleaseName(chart: string): string {
-  return `${chart}-${process.env['GITHUB_REPOSITORY_NAME']}-${process.env['GITHUB_RUN_NUMBER']}`
+  // @ts-ignore
+  const repo = process.env['GITHUB_REPOSITORY'].split('/')[1]
+  return `${chart}-${repo}-${process.env['GITHUB_RUN_NUMBER']}`
 }
 
 run()

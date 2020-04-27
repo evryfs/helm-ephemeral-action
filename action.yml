@@ -13,6 +13,9 @@ inputs:
   chart:
     description: 'Helm chart to install'
     required: true
+outputs:
+  releaseName:
+    description: 'Generated release name on the form ${chart}-${repo}-${GITHUB_RUN_NUMBER'
 
 runs:
   using: 'node12'
