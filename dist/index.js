@@ -998,8 +998,7 @@ function installChart() {
         const releaseName = getReleaseName(chart);
         core.saveState(STATE_KEY_RELEASE_NAME, releaseName);
         core.setOutput('releaseName', releaseName);
-        yield exec.exec(helmCmd, ['repo', 'add', 'repo', repo]);
-        yield exec.exec(helmCmd, ['install', releaseName, `repo/${chart}`]);
+        yield exec.exec(helmCmd, ['install', '--repo', repo, releaseName, chart]);
     });
 }
 function isCleanupPhase() {
@@ -1009,7 +1008,9 @@ function cleanup() {
     return __awaiter(this, void 0, void 0, function* () {
         const releaseName = core.getState(STATE_KEY_RELEASE_NAME);
         if (releaseName) {
-            yield exec.exec(core.getInput('helm'), ['del', releaseName], { ignoreReturnCode: true });
+            yield exec.exec(core.getInput('helm'), ['del', releaseName], {
+                ignoreReturnCode: true
+            });
         }
     });
 }
