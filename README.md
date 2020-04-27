@@ -32,6 +32,6 @@ jobs:
       env:
         POSTGRESQL_ADDR: ${{ steps.postgresql.releaseName }}
       run: |
-        # run some test which will use lookup the postgresql endpoint from $POSTGRESQL_ADDR
+        # run some test which will use lookup the postgresql endpoint from env var POSTGRESQL_ADDR
         mvn -gs /settings-xml/settings.xml --fail-at-end -Dintegration-test=true -Dflyway=true -Denv=ci -Dbatch-test=true clean install surefire-report:report-only -Daggregate=true
 ```
