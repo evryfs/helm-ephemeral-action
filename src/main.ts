@@ -26,7 +26,14 @@ async function installChart(): Promise<void> {
   core.saveState(STATE_KEY_RELEASE_NAME, releaseName)
   core.setOutput('releaseName', releaseName)
 
-  await exec.exec(helmCmd, ['install', '--repo', repo, releaseName, chart, args])
+  await exec.exec(helmCmd, [
+    'install',
+    '--repo',
+    repo,
+    releaseName,
+    chart,
+    args
+  ])
 }
 
 function isCleanupPhase(): boolean {

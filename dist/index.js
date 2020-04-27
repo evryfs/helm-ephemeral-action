@@ -995,10 +995,11 @@ function installChart() {
         const repo = core.getInput('repo', { required: true });
         const chart = core.getInput('chart', { required: true });
         const helmCmd = core.getInput('helm', { required: true });
+        const args = core.getInput('args', { required: false });
         const releaseName = getReleaseName(chart);
         core.saveState(STATE_KEY_RELEASE_NAME, releaseName);
         core.setOutput('releaseName', releaseName);
-        yield exec.exec(helmCmd, ['install', '--repo', repo, releaseName, chart]);
+        yield exec.exec(helmCmd, ['install', '--repo', repo, releaseName, chart, args]);
     });
 }
 function isCleanupPhase() {
