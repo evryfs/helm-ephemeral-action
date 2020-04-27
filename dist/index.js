@@ -997,6 +997,7 @@ function installChart() {
         const helmCmd = core.getInput('helm', { required: true });
         const releaseName = getReleaseName(chart);
         core.saveState(STATE_KEY_RELEASE_NAME, releaseName);
+        core.setOutput('releaseName', releaseName);
         yield exec.exec(helmCmd, ['repo', 'add', 'repo', repo]);
         yield exec.exec(helmCmd, ['install', releaseName, `repo/${chart}`]);
     });
@@ -1008,12 +1009,13 @@ function cleanup() {
     return __awaiter(this, void 0, void 0, function* () {
         const releaseName = core.getState(STATE_KEY_RELEASE_NAME);
         if (releaseName) {
-            yield exec.exec(core.getInput('helm'), ['del', releaseName]);
+            yield exec.exec(core.getInput('helm'), ['del', releaseName], { ignoreReturnCode: true });
         }
     });
 }
 function getReleaseName(chart) {
-    return `${chart}-${process.env['GITHUB_REPOSITORY_NAME']}-${process.env['GITHUB_RUN_NUMBER']}`;
+    const repo = process.env['GITHUB_REPOSITORY'].split('/')[1];
+    return `${chart}-${repo}-${process.env['GITHUB_RUN_NUMBER']}`;
 }
 run();
 

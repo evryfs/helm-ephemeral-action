@@ -36,13 +36,14 @@ function isCleanupPhase(): boolean {
 async function cleanup(): Promise<void> {
   const releaseName = core.getState(STATE_KEY_RELEASE_NAME)
   if (releaseName) {
-    await exec.exec(core.getInput('helm'), ['del', releaseName])
+    await exec.exec(core.getInput('helm'), ['del', releaseName], {
+      ignoreReturnCode: true
+    })
   }
 }
 
 function getReleaseName(chart: string): string {
-  // @ts-ignore
-  const repo = process.env['GITHUB_REPOSITORY'].split('/')[1]
+  const repo = process.env['GITHUB_REPOSITORY']!.split('/')[1]
   return `${chart}-${repo}-${process.env['GITHUB_RUN_NUMBER']}`
 }
 
