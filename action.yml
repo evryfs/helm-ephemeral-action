@@ -5,10 +5,6 @@ branding:
   icon: download-cloud
   color: blue
 inputs:
-  helm:
-    description: 'Helm command'
-    default: 'helm'
-    required: false
   repo:
     description: 'Helm repo'
     required: true
@@ -16,6 +12,14 @@ inputs:
   chart:
     description: 'Helm chart to install'
     required: true
+  helm:
+    description: 'Helm command'
+    default: 'helm'
+    required: false
+  args:
+    description: 'Additional args to pass to helm'
+    default: '--wait --timeout 2m'
+    required: false
 outputs:
   releaseName:
     description: 'Generated release name on the form ${chart}-${repo}-${GITHUB_RUN_NUMBER'
