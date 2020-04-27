@@ -2,7 +2,8 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as process from 'process'
 
-const STATE_KEY_RELEASE_NAME = 'releaseName'
+const OUTPUT_KEY_RELEASE_NAME = 'releaseName'
+const STATE_KEY_RELEASE_NAME = OUTPUT_KEY_RELEASE_NAME
 
 export async function run(): Promise<void> {
   try {
@@ -24,7 +25,7 @@ async function installChart(): Promise<void> {
 
   const releaseName = getReleaseName(chart)
   core.saveState(STATE_KEY_RELEASE_NAME, releaseName)
-  core.setOutput('releaseName', releaseName)
+  core.setOutput(OUTPUT_KEY_RELEASE_NAME, releaseName)
 
   await exec.exec(
     helmCmd,

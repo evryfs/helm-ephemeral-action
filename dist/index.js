@@ -973,7 +973,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const exec = __importStar(__webpack_require__(986));
 const process = __importStar(__webpack_require__(765));
-const STATE_KEY_RELEASE_NAME = 'releaseName';
+const OUTPUT_KEY_RELEASE_NAME = 'releaseName';
+const STATE_KEY_RELEASE_NAME = OUTPUT_KEY_RELEASE_NAME;
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -998,14 +999,8 @@ function installChart() {
         const args = core.getInput('args', { required: false });
         const releaseName = getReleaseName(chart);
         core.saveState(STATE_KEY_RELEASE_NAME, releaseName);
-        core.setOutput('releaseName', releaseName);
-        yield exec.exec(helmCmd, [
-            'install',
-            '--repo',
-            repo,
-            releaseName,
-            chart
-        ].concat(args.split(' ')));
+        core.setOutput(OUTPUT_KEY_RELEASE_NAME, releaseName);
+        yield exec.exec(helmCmd, ['install', '--repo', repo, releaseName, chart].concat(args.split(' ')));
     });
 }
 function isCleanupPhase() {
