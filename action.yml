@@ -1,10 +1,20 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'David J. M. Karlsen'
+description: 'Install ephemeral helm releases which gets deleted at pipeline end'
+author: 'evryfs'
 inputs:
-  myInput:              # change this
-    description: 'input description here'
-    default: 'default value if applicable'
+  helm:
+    description: 'Helm command'
+    default: 'helm'
+    required: false
+  repo:
+    description: 'Helm repo'
+    required: true
+    default: 'TBD'
+  chart:
+    description: 'Helm chart to install'
+    required: true
+
 runs:
   using: 'node12'
   main: 'dist/index.js'
+  post: 'dist/index.js'

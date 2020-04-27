@@ -1,19 +1,46 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import * as exec from '@actions/exec'
+import * as process from 'process'
 
-async function run(): Promise<void> {
+const STATE_KEY_RELEASE_NAME = 'releaseName'
+
+export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`)
-
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    core.setOutput('time', new Date().toTimeString())
+    if (isCleanupPhase()) {
+      await cleanup()
+    } else {
+      await installChart()
+    }
   } catch (error) {
     core.setFailed(error.message)
   }
+}
+
+async function installChart(): Promise<void> {
+  const repo: string = core.getInput('repo', {required: true})
+  const chart: string = core.getInput('chart', {required: true})
+  const helmCmd: string = core.getInput('helm', {required: true})
+
+  const releaseName = getReleaseName(chart)
+  core.saveState(STATE_KEY_RELEASE_NAME, releaseName)
+
+  await exec.exec(helmCmd, ['repo', 'add', 'repo', repo])
+  await exec.exec(helmCmd, ['install', releaseName, `repo/${chart}`])
+}
+
+function isCleanupPhase(): boolean {
+  return core.getState(STATE_KEY_RELEASE_NAME).length > 0
+}
+
+async function cleanup(): Promise<void> {
+  const releaseName = core.getState(STATE_KEY_RELEASE_NAME)
+  if (releaseName) {
+    await exec.exec(core.getInput('helm'), ['del', releaseName])
+  }
+}
+
+function getReleaseName(chart: string): string {
+  return `${chart}-${process.env['GITHUB_REPOSITORY_NAME']}-${process.env['GITHUB_RUN_NUMBER']}`
 }
 
 run()
