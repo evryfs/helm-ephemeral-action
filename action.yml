@@ -3,7 +3,7 @@ description: 'Install ephemeral helm releases which gets deleted at pipeline end
 author: 'evryfs'
 branding:
   icon: download-cloud
-  color: green
+  color: blue
 inputs:
   helm:
     description: 'Helm command'
