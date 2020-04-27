@@ -1,6 +1,9 @@
 name: 'David J. M. Karlsen'
 description: 'Install ephemeral helm releases which gets deleted at pipeline end'
 author: 'evryfs'
+branding:
+  icon: download-cloud
+  color: green
 inputs:
   helm:
     description: 'Helm command'
