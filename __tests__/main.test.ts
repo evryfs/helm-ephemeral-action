@@ -1,20 +1,32 @@
 import {run} from '../src/main'
-import * as process from 'process'
-import * as cp from 'child_process'
-import * as path from 'path'
+import * as core from '@actions/core'
+import * as exec from '@actions/exec'
+import {beforeEach} from "jest-circus";
 
-test('should raise error', async () => {
-  await expect(run()).toThrow
+let inputs = {} as any;
+
+beforeAll(() => {
+  inputs.chart = 'someChart';
+  inputs.repo = 'someRepo';
+  inputs.helm = 'helm';
+  inputs.args = 'some args'
+
+  jest.spyOn(exec, 'exec').mockImplementation((): Promise<number> => {
+    return Promise.resolve(0);
+  });
+
+  jest.spyOn(core, 'getInput').mockImplementation((name: string): string => {
+    return inputs[name];
+  });
 })
 
-/*
-test('test runs', () => {
-  process.env['GITHUB_REPOSITORY_NAME'] = 'someRepo'
+beforeEach(() => {
+  // Reset inputs
+  inputs = {}
+})
+
+test('test runs', async () => {
+  process.env['GITHUB_REPOSITORY'] = 'someOrg/someRepo'
   process.env['GITHUB_RUN_NUMBER'] = "11"
-  const ip = path.join(__dirname, '..', 'lib', 'main.js')
-  const options: cp.ExecSyncOptions = {
-    env: process.env
-  }
-  console.log(cp.execSync(`node ${ip}`, options).toString())
+  await expect(run()).resolves.not.toThrow
 })
-*/
