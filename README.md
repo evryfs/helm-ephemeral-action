@@ -1,6 +1,4 @@
-<p align="center">
-  <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
-</p>
+![build-test](https://github.com/evryfs/helm-ephemeral-action/workflows/build-test/badge.svg)
 
 # Ephemeral helm chart installs
 
