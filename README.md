@@ -32,8 +32,10 @@ jobs:
         args: '--wait --timeout 2m' #optional, default value is '--wait --timeout 2m' in order to wait for the chart-install to stabilize into ready state
     - name: Run build
       env:
+        # the release is named <chartname>-<repo-name>-<GITHUB_RUN_NUMBER> so that several installs of same chart can go into same namespace w/o interfering
         POSTGRESQL_ADDR: ${{ steps.postgresql.releaseName }}
       run: |
         # run some test which will use lookup the postgresql endpoint from env var POSTGRESQL_ADDR
         mvn -gs /settings-xml/settings.xml --fail-at-end -Dintegration-test=true -Dflyway=true -Denv=ci -Dbatch-test=true clean install surefire-report:report-only -Daggregate=true
+    # no need for special actions at end, the release will be deleted in the jobs's post-step: https://github.community/t5/GitHub-Actions/About-post-in-an-Action/td-p/41973
 ```
