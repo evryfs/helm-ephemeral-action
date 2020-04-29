@@ -23,7 +23,7 @@
     "setup"
   ],
   "author": "YourNameOrOrganization",
-  "license": "MIT",
+  "license": "ASL2",
   "dependencies": {
     "@actions/core": "^1.2.3",
     "@actions/exec": "^1.0.4",
