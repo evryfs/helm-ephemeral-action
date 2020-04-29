@@ -28,6 +28,8 @@ jobs:
       with:
         repo: https://charts.bitnami.com/bitnami
         chart: postgresql
+        helm: 'helm' # optional, default value is 'helm'
+        args: '--wait --timeout 2m' #optional, default value is '--wait --timeout 2m' in order to wait for the chart-install to stabilize into ready state
     - name: Run build
       env:
         POSTGRESQL_ADDR: ${{ steps.postgresql.releaseName }}

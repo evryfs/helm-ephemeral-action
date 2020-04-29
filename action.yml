@@ -8,7 +8,6 @@ inputs:
   repo:
     description: 'Helm repo'
     required: true
-    default: 'TBD'
   chart:
     description: 'Helm chart to install'
     required: true
