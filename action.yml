@@ -1,4 +1,4 @@
-name: 'David J. M. Karlsen'
+name: 'helm-ephemeral-action'
 description: 'Install ephemeral helm releases which gets deleted at pipeline end'
 author: 'evryfs'
 branding:
