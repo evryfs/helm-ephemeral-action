@@ -31,7 +31,7 @@ jobs:
     - name: Run build
       env:
         # the release is named <chartname>-<repo-name>-<GITHUB_RUN_NUMBER> so that several installs of same chart can go into same namespace w/o interfering
-        POSTGRESQL_ADDR: ${{ steps.postgresql.releaseName }}
+        POSTGRESQL_ADDR: ${{ steps.postgresql.outputs.releaseName }}
       run: |
         # run some test which will use lookup the postgresql endpoint from env var POSTGRESQL_ADDR
         mvn -gs /settings-xml/settings.xml --fail-at-end -Dintegration-test=true -Dflyway=true -Denv=ci -Dbatch-test=true clean install surefire-report:report-only -Daggregate=true
