@@ -22,7 +22,7 @@ jobs:
       with:
         version: 'v3.2.0'
     - name: Create k8s Kind Cluster
-      uses: helm/kind-action@v1.0.0
+      uses: helm/kind-action@v1.1.0
       with:
         node_image: kindest/node:v1.17.2
     - uses: ./
