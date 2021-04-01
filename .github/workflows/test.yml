@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: azure/setup-helm@v1
+    - uses: azure/setup-helm@v1.1
       with:
         version: 'v3.4.1'
     - name: Create k8s Kind Cluster
