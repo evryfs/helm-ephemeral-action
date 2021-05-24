@@ -11,11 +11,9 @@ beforeAll(() => {
   inputs.helm = 'helm'
   inputs.args = 'some args'
 
-  jest.spyOn(exec, 'exec').mockImplementation(
-    (): Promise<number> => {
-      return Promise.resolve(0)
-    }
-  )
+  jest.spyOn(exec, 'exec').mockImplementation((): Promise<number> => {
+    return Promise.resolve(0)
+  })
 
   jest.spyOn(core, 'getInput').mockImplementation((name: string): string => {
     return inputs[name]
