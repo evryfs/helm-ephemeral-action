@@ -12,7 +12,7 @@ export async function run(): Promise<void> {
     } else {
       await installChart()
     }
-  } catch (error) {
+  } catch (error: any) {
     core.setFailed(error.message)
   }
 }
