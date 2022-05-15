@@ -1,9 +1,11 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
+import github from '@actions/github'
 import * as process from 'process'
 
 const OUTPUT_KEY_RELEASE_NAME = 'releaseName'
 const STATE_KEY_RELEASE_NAME = OUTPUT_KEY_RELEASE_NAME
+const context = github.context
 
 export async function run(): Promise<void> {
   try {
@@ -47,8 +49,7 @@ async function cleanup(): Promise<void> {
 }
 
 function getReleaseName(chart: string): string {
-  const repo = process.env['GITHUB_REPOSITORY']!.split('/')[1]
-  return `${chart}-${repo}-${process.env['GITHUB_RUN_NUMBER']}`
+  return `${chart}-${context.repo.repo}-${context.runNumber}`
 }
 
 run()
