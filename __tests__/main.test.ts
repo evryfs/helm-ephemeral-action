@@ -1,8 +1,9 @@
 import {run} from '../src/main'
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
-import github from '@actions/github'
+import * as github from '@actions/github'
 import {beforeEach} from 'jest-circus'
+import {Context} from "@actions/github/lib/context";
 
 let inputs = {} as any
 
@@ -20,22 +21,6 @@ beforeAll(() => {
     return inputs[name]
   })
 
-  jest.spyOn(github, "context").mockImplementation(() => {
-    return {
-      repo: {
-        owner: 'someOrg',
-        repo: 'someRepo'
-      },
-      runNumber: 11,
-      payload: {
-        pull_request: {
-          head: {
-            ref: 'someBranch'
-          }
-        }
-      }
-    }
-  })
 })
 
 beforeEach(() => {
@@ -44,5 +29,7 @@ beforeEach(() => {
 })
 
 test('test runs', async () => {
+  process.env['GITHUB_REPOSITORY'] = 'someOrg/someRepo'
+  github.context.runNumber = 11;
   await expect(run()).resolves.not.toThrow
 })
