@@ -1,7 +1,6 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import github from '@actions/github'
-
 const OUTPUT_KEY_RELEASE_NAME = 'releaseName'
 const STATE_KEY_RELEASE_NAME = OUTPUT_KEY_RELEASE_NAME
 const context = github.context
