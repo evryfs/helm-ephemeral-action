@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as github from '@actions/github'
+import stringHash from '@sindresorhus/string-hash'
 const OUTPUT_KEY_RELEASE_NAME = 'releaseName'
 const STATE_KEY_RELEASE_NAME = OUTPUT_KEY_RELEASE_NAME
 
@@ -46,7 +47,10 @@ async function cleanup(): Promise<void> {
 }
 
 function getReleaseName(chart: string): string {
-  return `${chart}-${github.context.repo.repo}-${github.context.runNumber}`
+  const prefix = `${chart}-${github.context.repo.repo}`
+  const suffix = `${github.context.workflow}-${github.context.job}-${github.context.runId}-${github.context.runNumber}`
+
+  return `${prefix}-${stringHash(suffix)}`
 }
 
 run()

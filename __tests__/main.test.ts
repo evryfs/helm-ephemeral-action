@@ -3,7 +3,6 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as github from '@actions/github'
 import {beforeEach} from 'jest-circus'
-import {Context} from '@actions/github/lib/context'
 
 let inputs = {} as any
 
@@ -30,5 +29,7 @@ beforeEach(() => {
 test('test runs', async () => {
   process.env['GITHUB_REPOSITORY'] = 'someOrg/someRepo'
   github.context.runNumber = 11
+  github.context.runId = 12
+  github.context.job = 'someJob'
   await expect(run()).resolves.not.toThrow
 })
