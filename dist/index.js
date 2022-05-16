@@ -1075,6 +1075,34 @@ function onceStrict (fn) {
 
 /***/ }),
 
+/***/ 53:
+/***/ (function(module) {
+
+"use strict";
+
+const OFFSET_BASIS_32 = 2166136261;
+
+const fnv1a = string => {
+	let hash = OFFSET_BASIS_32;
+
+	for (let i = 0; i < string.length; i++) {
+		hash ^= string.charCodeAt(i);
+
+		// 32-bit FNV prime: 2**24 + 2**8 + 0x93 = 16777619
+		// Using bitshift for accuracy and performance. Numbers in JS suck.
+		hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+	}
+
+	return hash >>> 0;
+};
+
+module.exports = fnv1a;
+// TODO: remove this in the next major version, refactor the whole definition to:
+module.exports.default = fnv1a;
+
+
+/***/ }),
+
 /***/ 70:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -1828,11 +1856,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = void 0;
 const core = __importStar(__webpack_require__(470));
 const exec = __importStar(__webpack_require__(986));
 const github = __importStar(__webpack_require__(469));
+const string_hash_1 = __importDefault(__webpack_require__(720));
 const OUTPUT_KEY_RELEASE_NAME = 'releaseName';
 const STATE_KEY_RELEASE_NAME = OUTPUT_KEY_RELEASE_NAME;
 function run() {
@@ -1877,7 +1909,9 @@ function cleanup() {
     });
 }
 function getReleaseName(chart) {
-    return `${chart}-${github.context.repo.repo}-${github.context.runNumber}`;
+    const prefix = `${chart}-${github.context.repo.repo}`;
+    const suffix = `${github.context.workflow}-${github.context.job}-${github.context.runId}-${github.context.runNumber}`;
+    return `${prefix}-${(0, string_hash_1.default)(suffix)}`;
 }
 run();
 
@@ -6798,6 +6832,22 @@ class Deprecation extends Error {
 }
 
 exports.Deprecation = Deprecation;
+
+
+/***/ }),
+
+/***/ 720:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const fnv1a = __webpack_require__(53);
+
+const stringHash = string => fnv1a(string);
+
+module.exports = stringHash;
+// TODO: remove this in the next major version
+module.exports.default = stringHash;
 
 
 /***/ }),
