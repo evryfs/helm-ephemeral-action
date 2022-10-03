@@ -50,7 +50,7 @@ function getReleaseName(chart: string): string {
   const prefix = `${chart}-${github.context.repo.repo}`
   const suffix = `${github.context.workflow}-${github.context.job}-${github.context.runId}-${github.context.runNumber}`
 
-  return `${prefix}-${stringHash(suffix)}`
+  return `${prefix}-${stringHash(suffix)}`.toLowerCase()
 }
 
 run()
