@@ -2093,7 +2093,7 @@ function getReleaseName(chart) {
     const suffix = `${github.context.workflow}-${github.context.job}-${github.context.runId}-${github.context.runNumber}`;
     const fullName = `${prefix}-${(0, string_hash_1.default)(suffix)}`.toLowerCase();
     return fullName.length > MAX_RELEASE_NAME_LENGTH
-        ? fullName.substring(fullName.length - MAX_RELEASE_NAME_LENGTH)
+        ? fullName.replace("-", "").substring(fullName.length - MAX_RELEASE_NAME_LENGTH)
         : fullName;
 }
 run();

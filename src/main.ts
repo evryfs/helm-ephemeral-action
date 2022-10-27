@@ -54,7 +54,9 @@ function getReleaseName(chart: string): string {
   const fullName = `${prefix}-${stringHash(suffix)}`.toLowerCase()
 
   return fullName.length > MAX_RELEASE_NAME_LENGTH
-    ? fullName.substring(fullName.length - MAX_RELEASE_NAME_LENGTH)
+    ? fullName
+        .replace('-', '')
+        .substring(fullName.length - MAX_RELEASE_NAME_LENGTH)
     : fullName
 }
 
