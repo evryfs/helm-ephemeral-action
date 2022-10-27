@@ -4,7 +4,8 @@ import * as github from '@actions/github'
 import stringHash from '@sindresorhus/string-hash'
 const OUTPUT_KEY_RELEASE_NAME = 'releaseName'
 const STATE_KEY_RELEASE_NAME = OUTPUT_KEY_RELEASE_NAME
-const MAX_RELEASE_NAME_LENGTH = 53
+// hack - to leave some room for suffixes in the chart
+const MAX_RELEASE_NAME_LENGTH = 53 - 19
 
 export async function run(): Promise<void> {
   try {

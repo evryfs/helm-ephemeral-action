@@ -2045,7 +2045,8 @@ const github = __importStar(__webpack_require__(469));
 const string_hash_1 = __importDefault(__webpack_require__(720));
 const OUTPUT_KEY_RELEASE_NAME = 'releaseName';
 const STATE_KEY_RELEASE_NAME = OUTPUT_KEY_RELEASE_NAME;
-const MAX_RELEASE_NAME_LENGTH = 53;
+// hack - to leave some room for suffixes in the chart
+const MAX_RELEASE_NAME_LENGTH = 53 - 19;
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -2091,7 +2092,9 @@ function getReleaseName(chart) {
     const prefix = `${chart}-${github.context.repo.repo}`;
     const suffix = `${github.context.workflow}-${github.context.job}-${github.context.runId}-${github.context.runNumber}`;
     const fullName = `${prefix}-${(0, string_hash_1.default)(suffix)}`.toLowerCase();
-    return fullName.length > MAX_RELEASE_NAME_LENGTH ? fullName.substring(fullName.length - MAX_RELEASE_NAME_LENGTH) : fullName;
+    return fullName.length > MAX_RELEASE_NAME_LENGTH
+        ? fullName.substring(fullName.length - MAX_RELEASE_NAME_LENGTH)
+        : fullName;
 }
 run();
 
