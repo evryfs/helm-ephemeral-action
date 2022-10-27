@@ -2,6 +2,8 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as github from '@actions/github'
 import stringHash from '@sindresorhus/string-hash'
+import _ from 'lodash'
+
 const OUTPUT_KEY_RELEASE_NAME = 'releaseName'
 const STATE_KEY_RELEASE_NAME = OUTPUT_KEY_RELEASE_NAME
 // hack - to leave some room for suffixes in the chart
@@ -53,11 +55,12 @@ function getReleaseName(chart: string): string {
   const suffix = `${github.context.workflow}-${github.context.job}-${github.context.runId}-${github.context.runNumber}`
   const fullName = `${prefix}-${stringHash(suffix)}`.toLowerCase()
 
-  return fullName.length > MAX_RELEASE_NAME_LENGTH
-    ? fullName
-        .replace('-', '')
-        .substring(fullName.length - MAX_RELEASE_NAME_LENGTH)
-    : fullName
+  const truncated =
+    fullName.length > MAX_RELEASE_NAME_LENGTH
+      ? fullName.substring(fullName.length - MAX_RELEASE_NAME_LENGTH)
+      : fullName
+
+  return _.trimStart(truncated, '-')
 }
 
 run()
