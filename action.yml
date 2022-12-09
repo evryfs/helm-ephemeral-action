@@ -24,6 +24,6 @@ outputs:
     description: 'Generated release name on the form ${chart}-${repo}-${GITHUB_RUN_NUMBER'
 
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
   post: 'dist/index.js'
