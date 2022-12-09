@@ -2,6 +2,7 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as github from '@actions/github'
 import stringHash from '@sindresorhus/string-hash'
+import {retry} from 'ts-retry'
 const OUTPUT_KEY_RELEASE_NAME = 'releaseName'
 const STATE_KEY_RELEASE_NAME = OUTPUT_KEY_RELEASE_NAME
 
@@ -40,9 +41,12 @@ function isCleanupPhase(): boolean {
 async function cleanup(): Promise<void> {
   const releaseName = core.getState(STATE_KEY_RELEASE_NAME)
   if (releaseName) {
-    await exec.exec(core.getInput('helm'), ['del', releaseName], {
-      ignoreReturnCode: true
-    })
+    await retry(
+      async () => {
+        return await exec.exec(core.getInput('helm'), ['del', releaseName])
+      },
+      {maxTry: 3, delay: 1000}
+    )
   }
 }
 
