@@ -2240,7 +2240,10 @@ function installChart() {
         const chart = core.getInput('chart', { required: true });
         const helmCmd = core.getInput('helm', { required: true });
         const args = core.getInput('args', { required: false });
-        const releaseName = getReleaseName(chart);
+        const releaseSuffix = core.getInput('release-suffix', {
+            required: false
+        });
+        const releaseName = getReleaseName(chart, releaseSuffix);
         core.saveState(STATE_KEY_RELEASE_NAME, releaseName);
         core.setOutput(OUTPUT_KEY_RELEASE_NAME, releaseName);
         yield exec.exec(helmCmd, ['install', '--repo', repo, releaseName, chart].concat(args.split(' ')));
@@ -2259,9 +2262,9 @@ function cleanup() {
         }
     });
 }
-function getReleaseName(chart) {
+function getReleaseName(chart, releaseSuffix) {
     const prefix = `${chart}-${github.context.repo.repo}`;
-    const suffix = `${github.context.workflow}-${github.context.job}-${github.context.runId}-${github.context.runNumber}`;
+    const suffix = `${github.context.workflow}-${github.context.job}-${github.context.runId}-${github.context.runNumber}-${releaseSuffix}`;
     return `${prefix}-${(0, string_hash_1.default)(suffix)}`.toLowerCase();
 }
 run();
@@ -3000,7 +3003,7 @@ module.exports = require("assert");
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.waitUntilAsync = exports.waitUntil = exports.wait = exports.setDefaultDuration = exports.isTimeoutError = exports.getDefaultDuration = exports.setDefaultRetryOptions = exports.retryUntilTruthyDecorator = exports.retryUntilTruthy = exports.retryAsyncUntilTruthyDecorator = exports.retryAsyncUntilTruthy = exports.retryAsyncUntilResponseDecorator = exports.retryAsyncUntilResponse = exports.retryAsync = exports.retry = exports.isTooManyTries = exports.getDefaultRetryOptions = void 0;
+exports.waitUntilAsync = exports.waitUntil = exports.wait = exports.setDefaultDuration = exports.isTimeoutError = exports.getDefaultDuration = exports.createRandomDelay = exports.createMutiplicableDelay = exports.createExponetialDelay = exports.setDefaultRetryOptions = exports.retryUntilTruthyDecorator = exports.retryUntilTruthy = exports.retryAsyncUntilTruthyDecorator = exports.retryAsyncUntilTruthy = exports.retryAsyncUntilResponseDecorator = exports.retryAsyncUntilResponse = exports.retryAsync = exports.retry = exports.isTooManyTries = exports.getDefaultRetryOptions = void 0;
 var retry_1 = __webpack_require__(552);
 Object.defineProperty(exports, "getDefaultRetryOptions", { enumerable: true, get: function () { return retry_1.getDefaultRetryOptions; } });
 Object.defineProperty(exports, "isTooManyTries", { enumerable: true, get: function () { return retry_1.isTooManyTries; } });
@@ -3013,6 +3016,9 @@ Object.defineProperty(exports, "retryAsyncUntilTruthyDecorator", { enumerable: t
 Object.defineProperty(exports, "retryUntilTruthy", { enumerable: true, get: function () { return retry_1.retryUntilTruthy; } });
 Object.defineProperty(exports, "retryUntilTruthyDecorator", { enumerable: true, get: function () { return retry_1.retryUntilTruthyDecorator; } });
 Object.defineProperty(exports, "setDefaultRetryOptions", { enumerable: true, get: function () { return retry_1.setDefaultRetryOptions; } });
+Object.defineProperty(exports, "createExponetialDelay", { enumerable: true, get: function () { return retry_1.createExponetialDelay; } });
+Object.defineProperty(exports, "createMutiplicableDelay", { enumerable: true, get: function () { return retry_1.createMutiplicableDelay; } });
+Object.defineProperty(exports, "createRandomDelay", { enumerable: true, get: function () { return retry_1.createRandomDelay; } });
 var wait_1 = __webpack_require__(473);
 Object.defineProperty(exports, "getDefaultDuration", { enumerable: true, get: function () { return wait_1.getDefaultDuration; } });
 Object.defineProperty(exports, "isTimeoutError", { enumerable: true, get: function () { return wait_1.isTimeoutError; } });
@@ -6933,7 +6939,7 @@ module.exports.Collection = Hook.Collection
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.retryAsyncUntilResponseDecorator = exports.retryAsyncUntilResponse = exports.retryUntilTruthyDecorator = exports.retryUntilTruthy = exports.retryUntilDefinedDecorator = exports.retryUntilDefined = exports.retryAsyncUntilTruthyDecorator = exports.retryAsyncUntilTruthy = exports.retryAsyncUntilDefinedDecorator = exports.retryAsyncUntilDefined = exports.isTooManyTries = exports.retryAsync = exports.retry = exports.setDefaultRetryOptions = exports.getDefaultRetryOptions = void 0;
+exports.createRandomDelay = exports.createMutiplicableDelay = exports.createExponetialDelay = exports.retryAsyncUntilResponseDecorator = exports.retryAsyncUntilResponse = exports.retryUntilTruthyDecorator = exports.retryUntilTruthy = exports.retryUntilDefinedDecorator = exports.retryUntilDefined = exports.retryAsyncUntilTruthyDecorator = exports.retryAsyncUntilTruthy = exports.retryAsyncUntilDefinedDecorator = exports.retryAsyncUntilDefined = exports.isTooManyTries = exports.retryAsync = exports.retry = exports.setDefaultRetryOptions = exports.getDefaultRetryOptions = void 0;
 var options_1 = __webpack_require__(109);
 Object.defineProperty(exports, "getDefaultRetryOptions", { enumerable: true, get: function () { return options_1.getDefaultRetryOptions; } });
 Object.defineProperty(exports, "setDefaultRetryOptions", { enumerable: true, get: function () { return options_1.setDefaultRetryOptions; } });
@@ -6951,9 +6957,11 @@ Object.defineProperty(exports, "retryUntilDefined", { enumerable: true, get: fun
 Object.defineProperty(exports, "retryUntilDefinedDecorator", { enumerable: true, get: function () { return utils_1.retryUntilDefinedDecorator; } });
 Object.defineProperty(exports, "retryUntilTruthy", { enumerable: true, get: function () { return utils_1.retryUntilTruthy; } });
 Object.defineProperty(exports, "retryUntilTruthyDecorator", { enumerable: true, get: function () { return utils_1.retryUntilTruthyDecorator; } });
-var utils_2 = __webpack_require__(830);
-Object.defineProperty(exports, "retryAsyncUntilResponse", { enumerable: true, get: function () { return utils_2.retryAsyncUntilResponse; } });
-Object.defineProperty(exports, "retryAsyncUntilResponseDecorator", { enumerable: true, get: function () { return utils_2.retryAsyncUntilResponseDecorator; } });
+Object.defineProperty(exports, "retryAsyncUntilResponse", { enumerable: true, get: function () { return utils_1.retryAsyncUntilResponse; } });
+Object.defineProperty(exports, "retryAsyncUntilResponseDecorator", { enumerable: true, get: function () { return utils_1.retryAsyncUntilResponseDecorator; } });
+Object.defineProperty(exports, "createExponetialDelay", { enumerable: true, get: function () { return utils_1.createExponetialDelay; } });
+Object.defineProperty(exports, "createMutiplicableDelay", { enumerable: true, get: function () { return utils_1.createMutiplicableDelay; } });
+Object.defineProperty(exports, "createRandomDelay", { enumerable: true, get: function () { return utils_1.createRandomDelay; } });
 
 
 /***/ }),
@@ -7043,6 +7051,38 @@ class PersonalAccessTokenCredentialHandler {
 }
 exports.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHandler;
 //# sourceMappingURL=auth.js.map
+
+/***/ }),
+
+/***/ 571:
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createRandomDelay = exports.createMutiplicableDelay = exports.createExponetialDelay = void 0;
+function createExponetialDelay(initialDelay) {
+    const delay = ({ lastDelay }) => lastDelay !== undefined ? lastDelay * initialDelay : initialDelay;
+    return delay;
+}
+exports.createExponetialDelay = createExponetialDelay;
+function createMutiplicableDelay(initialDelay, multiplicator) {
+    const delay = ({ currentTry }) => {
+        if (currentTry === 1) {
+            return initialDelay;
+        }
+        const actualMultiplicator = (currentTry - 1) * multiplicator;
+        return initialDelay * actualMultiplicator;
+    };
+    return delay;
+}
+exports.createMutiplicableDelay = createMutiplicableDelay;
+function createRandomDelay(min, max) {
+    const multiplicator = max - min + 1;
+    return () => Math.floor(Math.random() * multiplicator + min);
+}
+exports.createRandomDelay = createRandomDelay;
+
 
 /***/ }),
 
@@ -8604,7 +8644,7 @@ module.exports = require("punycode");
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.retryDecorator = exports.retryAsyncDecorator = exports.retryAsyncUntilResponseDecorator = exports.retryAsyncUntilResponse = exports.retryUntilTruthyDecorator = exports.retryUntilTruthy = exports.retryAsyncUntilTruthyDecorator = exports.retryAsyncUntilTruthy = exports.retryUntilDefinedDecorator = exports.retryUntilDefined = exports.retryAsyncUntilDefinedDecorator = exports.retryAsyncUntilDefined = void 0;
+exports.createRandomDelay = exports.createMutiplicableDelay = exports.createExponetialDelay = exports.retryDecorator = exports.retryAsyncDecorator = exports.retryAsyncUntilResponseDecorator = exports.retryAsyncUntilResponse = exports.retryUntilTruthyDecorator = exports.retryUntilTruthy = exports.retryAsyncUntilTruthyDecorator = exports.retryAsyncUntilTruthy = exports.retryUntilDefinedDecorator = exports.retryUntilDefined = exports.retryAsyncUntilDefinedDecorator = exports.retryAsyncUntilDefined = void 0;
 var untilDefined_1 = __webpack_require__(126);
 Object.defineProperty(exports, "retryAsyncUntilDefined", { enumerable: true, get: function () { return untilDefined_1.retryAsyncUntilDefined; } });
 Object.defineProperty(exports, "retryAsyncUntilDefinedDecorator", { enumerable: true, get: function () { return untilDefined_1.retryAsyncUntilDefinedDecorator; } });
@@ -8621,6 +8661,10 @@ Object.defineProperty(exports, "retryAsyncUntilResponseDecorator", { enumerable:
 var decorators_1 = __webpack_require__(450);
 Object.defineProperty(exports, "retryAsyncDecorator", { enumerable: true, get: function () { return decorators_1.retryAsyncDecorator; } });
 Object.defineProperty(exports, "retryDecorator", { enumerable: true, get: function () { return decorators_1.retryDecorator; } });
+var delay_1 = __webpack_require__(571);
+Object.defineProperty(exports, "createExponetialDelay", { enumerable: true, get: function () { return delay_1.createExponetialDelay; } });
+Object.defineProperty(exports, "createMutiplicableDelay", { enumerable: true, get: function () { return delay_1.createMutiplicableDelay; } });
+Object.defineProperty(exports, "createRandomDelay", { enumerable: true, get: function () { return delay_1.createRandomDelay; } });
 
 
 /***/ }),

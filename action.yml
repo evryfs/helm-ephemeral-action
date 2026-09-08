@@ -19,6 +19,10 @@ inputs:
     description: 'Additional args to pass to helm'
     default: '--wait --timeout 2m'
     required: false
+  release-suffix:
+    description: 'Optional value added to the release name hash to isolate concurrent installs'
+    default: ''
+    required: false
 outputs:
   releaseName:
     description: 'Generated release name on the form ${chart}-${repo}-${GITHUB_RUN_NUMBER'

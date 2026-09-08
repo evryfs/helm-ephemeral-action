@@ -23,8 +23,11 @@ async function installChart(): Promise<void> {
   const chart: string = core.getInput('chart', {required: true})
   const helmCmd: string = core.getInput('helm', {required: true})
   const args: string = core.getInput('args', {required: false})
+  const releaseSuffix: string = core.getInput('release-suffix', {
+    required: false
+  })
 
-  const releaseName = getReleaseName(chart)
+  const releaseName = getReleaseName(chart, releaseSuffix)
   core.saveState(STATE_KEY_RELEASE_NAME, releaseName)
   core.setOutput(OUTPUT_KEY_RELEASE_NAME, releaseName)
 
@@ -50,9 +53,9 @@ async function cleanup(): Promise<void> {
   }
 }
 
-function getReleaseName(chart: string): string {
+function getReleaseName(chart: string, releaseSuffix: string): string {
   const prefix = `${chart}-${github.context.repo.repo}`
-  const suffix = `${github.context.workflow}-${github.context.job}-${github.context.runId}-${github.context.runNumber}`
+  const suffix = `${github.context.workflow}-${github.context.job}-${github.context.runId}-${github.context.runNumber}-${releaseSuffix}`
 
   return `${prefix}-${stringHash(suffix)}`.toLowerCase()
 }
