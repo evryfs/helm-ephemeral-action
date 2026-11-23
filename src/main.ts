@@ -56,5 +56,3 @@ function getReleaseName(chart: string): string {
 
   return `${prefix}-${stringHash(suffix)}`.toLowerCase()
 }
-
-run()
