@@ -10,8 +10,8 @@ jobs:
   build: # make sure build/ci work properly
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v7
+    - uses: actions/setup-node@v7
       with:
         node-version: 24
     - run: |
@@ -20,10 +20,10 @@ jobs:
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: azure/setup-helm@v3.5
+    - uses: actions/checkout@v7
+    - uses: azure/setup-helm@v5
     - name: Create k8s Kind Cluster
-      uses: helm/kind-action@v1.7.0
+      uses: helm/kind-action@v1.15.1
       with:
         node_image: kindest/node:v1.25.2
     - uses: ./
